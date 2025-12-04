@@ -92,70 +92,134 @@ function selectAvatar(img) {
     }
 }
 
-function deletePost(button) {
-    // button = clicked delete button
-    let card = button.closest(".card"); //Jis element par use kiya ho (button)
+// function deletePost(button) {
+//     // button = clicked delete button
+//     let card = button.closest(".card"); //Jis element par use kiya ho (button)
 
-    //Uske parents / grandparents / great-grandparents tak nearest card div find karega
-    card.remove(); // pura card delete
-}
+//     //Uske parents / grandparents / great-grandparents tak nearest card div find karega
+//     card.remove(); // pura card delete
+// }
 
 
+// function createPost() {
+
+//     let topic = document.getElementById("topicInput").value;
+//     let comment = document.getElementById("commentInput").value;
+
+//     // let firstName = document.getElementById("floatingFirstName").value;
+//     // let lastName = document.getElementById("floatingLastName").value;
+//     var getData = JSON.parse(localStorage.getItem("data"))
+     
+
+//   var postInfo = {
+//     topic,
+//     comment
+//   }
+//   localStorage.setItem("postInfo" ,JSON.stringify(postInfo))
+//    var getpostInfo = JSON.parse(localStorage.getItem("postInfo"))
+//     console.log(getpostInfo.topic);
+//     let time = new Date().toLocaleString();//it return readable time 
+
+//     if (selectedImage === "") {
+//         alert("Please select a background image!");
+//         return;
+//     }
+
+//     let postHTML = `
+//         <div class="card shadow mb-4 p-0" style="background-image:url('${selectedImage}'); background-size:cover;">
+//             <div class="p-4" style="backdrop-filter: brightness(0.8);">
+
+//                 <div class="d-flex mb-3">
+
+//                     <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
+//                          style="width:50px; height:50px; font-size:20px;">
+//                         ${getData.name.charAt(0).toUpperCase()}
+//                     </div>
+
+//                     <div class="ms-3">
+//                         <h5 class="mb-0">${getData.name}</h5>
+//                         <small class="text-light">${time}</small>
+//                     </div>
+//                 </div>
+
+//                 <h4>${getpostInfo.topic}</h4>
+//                 <p>${getpostInfo.comment}</p>
+//                 <div class="d-flex justify-content-start mt-5 align-items-end"><i class="fa-solid fa-comment cmnt" onclick="cmntBox()"></i></div>
+//                  <div class="mt-3 d-flex gap-2 justify-content-end">
+//                     <button class="btn btn-warning btn-sm" onclick="editPost(this)">Edit</button>
+//                     <button class="btn btn-danger btn-sm" onclick="deletePost(this)">Delete</button>
+//                 </div>
+//                  <div class="commentDiv" id="commentdiv"  gap-2 justify-content-end px-2">
+//                    <input type="text" id="usercmnt" class="form-control" placeholder ="Write anything .....">
+               
+//                <i class="fa-solid fa-paper-plane  m-auto pe-4" id="paperplane" onclick = "send()"></i>
+//                 </div>
+                  
+//             </div>
+//         </div>
+//     `;
+
+//     document.getElementById("postContainer").innerHTML += postHTML;
+
+// }
 function createPost() {
 
     let topic = document.getElementById("topicInput").value;
     let comment = document.getElementById("commentInput").value;
+    let getData = JSON.parse(localStorage.getItem("data"));
+    let time = new Date().toLocaleString();
 
-    // let firstName = document.getElementById("floatingFirstName").value;
-    // let lastName = document.getElementById("floatingLastName").value;
-    var getData = JSON.parse(localStorage.getItem("data"))
-    console.log(getData);
+    // 🔹 FIRST: Edit Mode Check — NOW topic/comment exist!
+    if (editId !== null) {
 
+        let posts = JSON.parse(localStorage.getItem("posts"));
+        let index = posts.findIndex(p => p.id === editId);
 
-    let time = new Date().toLocaleString();//it return readable time 
+        posts[index].topic = topic;
+        posts[index].comment = comment;
 
-    if (selectedImage === "") {
+        // Only update background if user selected new one
+        if (selectedImage) {
+            posts[index].bg = selectedImage;
+        }
+
+        localStorage.setItem("posts", JSON.stringify(posts));
+
+        editId = null;
+        displayPosts();
+
+        document.getElementById("topicInput").value = "";
+        document.getElementById("commentInput").value = "";
+
+        return;
+    }
+
+    // 🔹 Normal Post Create
+    if (!selectedImage) {
         alert("Please select a background image!");
         return;
     }
 
-    let postHTML = `
-        <div class="card shadow mb-4 p-0" style="background-image:url('${selectedImage}'); background-size:cover;">
-            <div class="p-4" style="backdrop-filter: brightness(0.8);">
+    let post = {
+        id: Date.now(),
+        name: getData.name,
+        topic,
+        comment,
+        time,
+        bg: selectedImage
+    };
 
-                <div class="d-flex mb-3">
+    let posts = JSON.parse(localStorage.getItem("posts")) || [];
+    posts.push(post);
 
-                    <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
-                         style="width:50px; height:50px; font-size:20px;">
-                        ${getData.name.charAt(0).toUpperCase()}
-                    </div>
+    localStorage.setItem("posts", JSON.stringify(posts));
 
-                    <div class="ms-3">
-                        <h5 class="mb-0">${getData.name}</h5>
-                        <small class="text-light">${time}</small>
-                    </div>
-                </div>
+    displayPosts();
 
-                <h4>${topic}</h4>
-                <p>${comment}</p>
-                <div class="d-flex justify-content-start mt-5 align-items-end"><i class="fa-solid fa-comment cmnt" onclick="cmntBox()"></i></div>
-                 <div class="mt-3 d-flex gap-2 justify-content-end">
-                    <button class="btn btn-warning btn-sm" onclick="editPost(this)">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="deletePost(this)">Delete</button>
-                </div>
-                 <div class="commentDiv" id="commentdiv"  gap-2 justify-content-end px-2">
-                   <input type="text" id="usercmnt" class="form-control" placeholder ="Write anything .....">
-               
-               <i class="fa-solid fa-paper-plane  m-auto pe-4" id="paperplane" onclick = "send()"></i>
-                </div>
-                  
-            </div>
-        </div>
-    `;
-
-    document.getElementById("postContainer").innerHTML += postHTML;
-
+    document.getElementById("topicInput").value = "";
+    document.getElementById("commentInput").value = "";
 }
+
 function logout() {
     window.location.href = "/"
 }
@@ -182,21 +246,21 @@ function signIn() {
     }
     console.log(pswrd);
 }
-function editPost() {
-    var card = event.target.parentNode.parentNode;
-    var main = event.target.parentNode.parentNode.parentNode
-    //   console.log(card);
+// function editPost() {
+//     var card = event.target.parentNode.parentNode;
+//     var main = event.target.parentNode.parentNode.parentNode
+//     //   console.log(card);
 
-    var title = card.childNodes[3].innerHTML
-    //   console.log(title);
+//     var title = card.childNodes[3].innerHTML
+//     //   console.log(title);
 
-    var description = card.childNodes[5].innerHTML;
-    console.log(description);
+//     var description = card.childNodes[5].innerHTML;
+//     console.log(description);
 
-    document.getElementById("topicInput").value = title;
-    document.getElementById("commentInput").value = description;
-    main.remove()
-}
+//     document.getElementById("topicInput").value = title;
+//     document.getElementById("commentInput").value = description;
+//     main.remove()
+// }
 function cmntBox() {
     var commentDiv = document.getElementById("commentdiv");
 
@@ -234,3 +298,70 @@ var thumbsicon = event.target.style.color="blue"
 
 }
 
+function displayPosts() {
+    let container = document.getElementById("postContainer");
+    container.innerHTML = "";
+
+    let posts = JSON.parse(localStorage.getItem("posts")) || [];
+
+    posts.forEach(post => {
+        container.innerHTML += `
+        <div class="card shadow mb-4 p-0" style="background-image:url('${post.bg}'); background-size:cover;">
+            <div class="p-4" style="backdrop-filter: brightness(0.8);">
+
+                <div class="d-flex mb-3">
+                    <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
+                         style="width:50px; height:50px; font-size:20px;">
+                        ${post.name.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div class="ms-3">
+                        <h5 class="mb-0">${post.name}</h5>
+                        <small class="text-light">${post.time}</small>
+                    </div>
+                </div>
+
+                <h4>${post.topic}</h4>
+                <p>${post.comment}</p>
+
+                <div class="d-flex justify-content-start mt-5 align-items-end">
+                    <i class="fa-solid fa-comment cmnt" onclick="cmntBox()"></i>
+                </div>
+
+                <div class="mt-3 d-flex gap-2 justify-content-end">
+                    <button class="btn btn-warning btn-sm" onclick="editPost(${post.id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deletePost(${post.id})">Delete</button>
+                </div>
+
+                <div class="commentDiv" id="commentdiv">
+                    <input type="text" id="usercmnt" class="form-control" placeholder ="Write anything .....">
+                    <i class="fa-solid fa-paper-plane m-auto pe-4" onclick="send()"></i>
+                </div>
+
+            </div>
+        </div>
+        `;
+    });
+}
+
+function deletePost(id) {
+    let posts = JSON.parse(localStorage.getItem("posts")) || [];
+
+    let updated = posts.filter(p => p.id !== id);
+
+    localStorage.setItem("posts", JSON.stringify(updated));
+
+    displayPosts();
+}
+let editId = null;
+
+function editPost(id) {
+    let posts = JSON.parse(localStorage.getItem("posts"));
+
+    let post = posts.find(p => p.id === id);
+
+    document.getElementById("topicInput").value = post.topic;
+    document.getElementById("commentInput").value = post.comment;
+
+    editId = id;  // store id for update
+}
