@@ -42,11 +42,11 @@ function render() {
     console.log(pswrd);
 }
 
-function renderData() {
-    var getData = JSON.parse(localStorage.getItem("data"))
-    console.log(getData);
+// function renderData() {
+//     var getData = JSON.parse(localStorage.getItem("data"))
+//     console.log(getData);
 
-}
+// }
 
 // post card
 selectedImage = ""
@@ -109,7 +109,7 @@ function selectAvatar(img) {
 //     // let firstName = document.getElementById("floatingFirstName").value;
 //     // let lastName = document.getElementById("floatingLastName").value;
 //     var getData = JSON.parse(localStorage.getItem("data"))
-     
+
 
 //   var postInfo = {
 //     topic,
@@ -151,10 +151,10 @@ function selectAvatar(img) {
 //                 </div>
 //                  <div class="commentDiv" id="commentdiv"  gap-2 justify-content-end px-2">
 //                    <input type="text" id="usercmnt" class="form-control" placeholder ="Write anything .....">
-               
+
 //                <i class="fa-solid fa-paper-plane  m-auto pe-4" id="paperplane" onclick = "send()"></i>
 //                 </div>
-                  
+
 //             </div>
 //         </div>
 //     `;
@@ -233,14 +233,14 @@ function signIn() {
     //     username,
     //     userpswrd
     // }
-    if (getData.name !== username) {
+    if (!username) {
+        alert("plz Enter your username")
+    } else if (getData.name !== username) {
         alert("invalid username")
-    } else if (getData.pswrd !== userpswrd) {
-        alert("Invalid password")
-    } else if (!username) {
-        alert("plz enter username")
     } else if (!userpswrd) {
         alert("plz enter password")
+    } else if (getData.pswrd !== userpswrd) {
+        alert("Invalid password")
     } else {
         window.location.href = "/post.html"
     }
@@ -263,12 +263,11 @@ function signIn() {
 // }
 function cmntBox() {
     var commentDiv = document.getElementById("commentdiv");
-
-    if (commentDiv.style.display === "flex") {
-        commentDiv.style.display = "none";
-    } else {
-        commentDiv.style.display = "flex";
-    }
+commentDiv.style.display = "flex"
+}
+function hide(){
+     var commentDiv = document.getElementById("commentdiv");
+commentDiv.style.display = "none"
 }
 
 function send() {
@@ -292,9 +291,9 @@ function editcmnt() {
     console.log(cmnt);
     cmntdiv.remove()
 }
-function changeColor(){
-var thumbsicon = event.target.style.color="blue"
-// console.log(thumbsicon);
+function changeColor() {
+    var thumbsicon = event.target.style.color = "blue"
+    // console.log(thumbsicon);
 
 }
 
@@ -306,7 +305,7 @@ function displayPosts() {
 
     posts.forEach(post => {
         container.innerHTML += `
-        <div class="card shadow mb-4 p-0" style="background-image:url('${post.bg}'); background-size:cover;">
+        <div class="card shadow mb-4 p-0" id="postDiv" style="background-image:url('${post.bg}'); background-size:cover;">
             <div class="p-4" style="backdrop-filter: brightness(0.8);">
 
                 <div class="d-flex mb-3">
@@ -333,9 +332,10 @@ function displayPosts() {
                     <button class="btn btn-danger btn-sm" onclick="deletePost(${post.id})">Delete</button>
                 </div>
 
-                <div class="commentDiv" id="commentdiv">
+                <div class="commentDiv p-3" id="commentdiv">
+                </i> <i class="fa-solid fa-x" id="maincross" onclick="hide()"></i>  
                     <input type="text" id="usercmnt" class="form-control" placeholder ="Write anything .....">
-                    <i class="fa-solid fa-paper-plane m-auto pe-4" onclick="send()"></i>
+                    <i class="fa-solid fa-paper-plane m-auto pe-4" id="paperplane" onclick="send()"></i>
                 </div>
 
             </div>
